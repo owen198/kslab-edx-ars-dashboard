@@ -1,0 +1,77 @@
+{% extends "courses/base-course.html" %}
+
+{% load i18n %}
+{% load staticfiles %}
+{% load waffle_tags %}
+{% load dashboard_extras %}
+{% load rjs %}
+
+{% comment %}
+    Individual course-centric engagement risk view.
+{% endcomment %}
+
+{% block view-name %}view-course-engagement view-dashboard{% endblock view-name %}
+
+
+{% block child_content %}
+    <section class="view-section">
+    <div class="section-heading bordered">
+        <h4 class="section-title">學生分佈情形</h4>
+        <span class="section-heading-note small">誰是高風險學生?</span>
+    </div>
+
+    {% if risk %}
+        <div class="section-content section-data-table" data-role="risk-table">
+            <div class="table-responsive">
+                <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+                    <div class="row"><div class="col-xs-12">
+                        <table class="table table-striped dataTable no-footer" id="DataTables_Table_0" role="grid">
+                            <thead>
+                                <tr role="row">
+                                    <th Style="text-align:center">學生名稱</th>
+                                    <th Style="text-align:center" colspan="4" >最近四週預測</th>
+                                    <th Style="text-align:center">活動次數</th>
+                                    <th Style="text-align:center">影片點擊次數</th>
+                                    <th Style="text-align:center">測驗作答</th>
+                                    <th Style="text-align:center">討論區發文</th>
+                                    <th Style="text-align:center">E-mail</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for r in risk%}
+                                    <tr role="row" class="odd">
+                                        <td class="sorting_1">{{ r.username }}</td>
+                                        {% for p in r.pre %}
+                                          <td class=" text-right">
+                                            {% if p == 1%}
+                                                <div style="width:10px;height:10px;background-color:#FF0000;border-radius:50%;margin:0px auto;"></div>
+                                            {% elif p == 0%}
+                                                <div style="width:10px;height:10px;background-color:#00FF00;border-radius:50%;margin:0px auto;"></div>
+                                            {% elif p == -1%}
+                                                <div style="width:10px;height:10px;background-color:#000000;border-radius:50%;margin:0px auto;"></div>
+                                            {% elif p == 2%}
+                                                <div style="width:10px;height:10px;background-color:#0000CC;border-radius:50%;margin:0px auto;"></div>
+                                            {% else %}
+                                                <div style="width:10px;height:10px;background-color:#FFFFFF;border-radius:50%;margin:0px auto;"></div>
+                                            {% endif %}
+                                        </td>
+                                        {% endfor %}
+                                        <td class=" text-right">{{ r.active }}</td>
+                                        <td class=" text-right">{{ r.video }}</td>
+                                        <td class=" text-right">{{ r.problem }}</td>
+                                        <td class=" text-right">{{ r.forum }}</td>
+                                        <td class=" text-right"><a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ r.email }}">{{ r.email }}</a></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div></div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        {% show_table_error %}
+    {% endif %}
+
+    </section>
+{% endblock %}
